@@ -39,7 +39,7 @@ for i in range(1,2):
     # 各県のページから「エリアごとの人気スポット欄」　のURLをリストで取得
     area_links = ["https:" + link['href'] for div in soup.find_all("div",class_="top-area-list-group-thum") for link in div.find_all('a')]
     print(area_links)
-    print("--------------------------------------------------")
+    print("----------------------------------------------------------------------------------------------------------")
     for favorite_spot_url in area_links:
         # 「エリアごとの人気スポット欄」のリストから１つずつ取り出して解析
         r2 = requests.get(favorite_spot_url)
@@ -48,13 +48,13 @@ for i in range(1,2):
         article_url_list = ["https:" + link['href'] for div in soup2.find_all("div",class_="panel") for link in div.find_all('a')]
         print("人気スポットのURL一覧")
         print(article_url_list)
-        print("--------------------------------------------------")
-        print("記事タイトル")
+        print("-----------------------------------------------------------------------------------------------------")
         # 記事からタイトルと内容をスクレイピング
         for article_link in article_url_list:
             r3 = requests.get(article_link)
             soup3 = bs4(r3.content, "html.parser")
             article_title = soup3.find("h1" ,class_="article-title")
             print("【タイトル】"+article_title.text)
-            for article in soup3.find_all(class_="article__description"):
+            for article in soup3.find_all(class_=["article__description--head","article__description"]):
              print(article.text)
+            print("-----------------------------------------------------------------------------------------------")
