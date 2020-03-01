@@ -12,7 +12,7 @@ import openpyxl
 # layer2[]　地方ページの「エリアごとの人気スポット欄」　
 # layer3[]　エリアごとのスポットからの記事一覧
 
-for i in range(2,3):
+for i in range(1,2):
     if i<10:
         prefectureNum = "0"+str(i)
     else:
@@ -21,12 +21,17 @@ for i in range(2,3):
     base_url = "http://gurutabi.gnavi.co.jp/p{}/".format(prefectureNum)
     r = requests.get(base_url)
     soup = bs4(r.content, "html.parser")
+
     # 県名取得
     prefecture_name = soup.find("h1",class_="area-top-header__ttl").text
     prefecture_name = prefecture_name[:prefecture_name.find("の")]
 
     # 地域名取得
-    if prefecture_name == "北海道" or prefecture_name == "沖縄":
+    if prefecture_name == "北海道":
+        area_name = "北海道"
+    elif prefecture_name == "沖縄":
+        area_name = "沖縄"
+    else:
         area_name = soup.find("ol",class_="breadcrumb__list").find_all("a").text
         print(area_name[1])
         print("--------------------------------------------------")
