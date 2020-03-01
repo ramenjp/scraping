@@ -5,14 +5,14 @@ import requests
 from bs4 import BeautifulSoup as bs4
 import openpyxl
 
-wb = openpyxl.load_workbook('../ぐるたびスクレイピング結果.xlsx')
+# with open('../ぐるたびスクレイピング結果.csv') as f:
+#     f.read()
 
 # layer1[] トップページの地方
 # layer2[]　地方ページの「エリアごとの人気スポット欄」　
 # layer3[]　エリアごとのスポットからの記事一覧
 
-
-for i in range(1,2):
+for i in range(2,3):
     if i<10:
         prefectureNum = "0"+str(i)
     else:
@@ -21,9 +21,20 @@ for i in range(1,2):
     base_url = "http://gurutabi.gnavi.co.jp/p{}/".format(prefectureNum)
     r = requests.get(base_url)
     soup = bs4(r.content, "html.parser")
+    # 県名取得
+    prefecture_name = soup.find("h1",class_="area-top-header__ttl").text
+    prefecture_name = prefecture_name[:prefecture_name.find("の")]
+
+    # 地域名取得
+    if prefecture_name == "北海道" or prefecture_name == "沖縄":
+        area_name = soup.find("ol",class_="breadcrumb__list").find_all("a").text
+        print(area_name[1])
+        print("--------------------------------------------------")
 
     # 各県のページから「エリアごとの人気スポット欄」　のURLをリストで取得
     area_links = ["https:" + link['href'] for div in soup.find_all("div",class_="top-area-list-group-thum") for link in div.find_all('a')]
+    print(area_links)
+    print("--------------------------------------------------")
     for link in area_links:
         # 「エリアごとの人気スポット欄」のリストから１つずつ取り出して解析
         favorite_spot_url = link
@@ -35,7 +46,7 @@ for i in range(1,2):
         print(article_url_list)
         print("--------------------------------------------------")
         print("記事タイトル")
-    #     記事からタイトルと内容をスクレイピング
+        # 記事からタイトルと内容をスクレイピング
         for article_link in article_url_list:
             r3 = requests.get(article_link)
             soup3 = bs4(r3.content, "html.parser")
