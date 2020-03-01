@@ -5,12 +5,10 @@ import requests
 from bs4 import BeautifulSoup as bs4
 import openpyxl
 
-# with open('../ぐるたびスクレイピング結果.csv') as f:
-#     f.read()
+with open('../ぐるたびスクレイピング結果.csv','w') as f:
+    writer = csv.writer(f)
 
-# layer1[] トップページの地方
-# layer2[]　地方ページの「エリアごとの人気スポット欄」　
-# layer3[]　エリアごとのスポットからの記事一覧
+
 
 for i in range(1,6):
     if i<10:
@@ -39,10 +37,9 @@ for i in range(1,6):
     # 各県のページから「エリアごとの人気スポット欄」　のURLをリストで取得
     area_links = ["https:" + link['href'] for div in pref_soup.find_all("div",class_="top-area-list-group-thum") for link in div.find_all('a')]
     print(area_links)
-    print("--------------------------------------------------")
-    for link in area_links:
+    print("----------------------------------------------------------------------------------------------------------")
+    for favorite_spot_url in area_links:
         # 「エリアごとの人気スポット欄」のリストから１つずつ取り出して解析
-        favorite_spot_url = link
         r2 = requests.get(favorite_spot_url)
         areas_soup = bs4(r2.content, "html.parser")
         # 人気スポットページの記事のURLをすべて取得
@@ -61,12 +58,15 @@ for i in range(1,6):
                 article_url_list.append(article_url_list[0]+"pg"+str(i))
                 i = i +1
         print(article_url_list)
-        # for page in (2, article_list_soup)
-        # print("--------------------------------------------------")
-        # print("記事タイトル")
-        # # 記事からタイトルと内容をスクレイピング
-        # for article_link in article_url_list:
-        #     r3 = requests.get(article_link)
-        #     soup3 = bs4(r3.content, "html.parser")
-        #     article_title = soup3.find("h1" ,class_="article-title")
-        #     print(article_title.text)
+        print("-----------------------------------------------------------------------------------------------------")
+        # 記事からタイトルと内容をスクレイピング
+        for article_link in article_url_list:
+            r3 = requests.get(article_link)
+            soup3 = bs4(r3.content, "html.parser")
+            article_title = soup3.find("h1" ,class_="article-title")
+            print("【タイトル】"+article_title.text)
+            for article in soup3.find_all(class_=["article__description--head","article__description"]):
+             print(article.text)
+             # writer.writerow(area_name,prefecture_name,article_title.text,article.text)
+
+            print("-----------------------------------------------------------------------------------------------")
