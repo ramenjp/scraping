@@ -5,12 +5,10 @@ import requests
 from bs4 import BeautifulSoup as bs4
 import openpyxl
 
-# with open('../ぐるたびスクレイピング結果.csv') as f:
-#     f.read()
+with open('../ぐるたびスクレイピング結果.csv','w') as f:
+    writer = csv.writer(f)
 
-# layer1[] トップページの地方
-# layer2[]　地方ページの「エリアごとの人気スポット欄」　
-# layer3[]　エリアごとのスポットからの記事一覧
+
 
 for i in range(1,2):
     if i<10:
@@ -57,4 +55,6 @@ for i in range(1,2):
             print("【タイトル】"+article_title.text)
             for article in soup3.find_all(class_=["article__description--head","article__description"]):
              print(article.text)
+             # writer.writerow(area_name,prefecture_name,article_title.text,article.text)
+
             print("-----------------------------------------------------------------------------------------------")
